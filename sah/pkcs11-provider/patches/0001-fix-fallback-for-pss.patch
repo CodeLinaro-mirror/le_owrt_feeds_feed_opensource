@@ -1,0 +1,44 @@
+diff --git a/src/signature.c b/src/signature.c
+index 7bfc72e..e4e7ed1 100644
+--- a/src/signature.c
++++ b/src/signature.c
+@@ -1018,7 +1018,38 @@ static CK_RV mech_fallback_final(P11PROV_SIG_CTX *sigctx, unsigned char *sig,
+         goto done;
+     }
+
+-    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, NULL);
++    switch(EVP_MD_CTX_type(sigctx->mechanism_fallback)){
++	case NID_sha1:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha1");
++		    break;
++	case NID_sha256:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha256");
++		    break;
++	case NID_sha384:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha384");
++		    break;
++	case NID_sha512:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha512");
++		    break;
++	case NID_sha224:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha224");
++		    break;
++	case NID_sha3_224:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha3-224");
++		    break;
++	case NID_sha3_256:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha3-256");
++		    break;
++	case NID_sha3_384:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha3-384");
++		    break;
++	case NID_sha3_512:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, "sha3-512");
++		    break;
++	    default:
++		    ret = p11prov_sig_op_init(subctx, sigctx->key, sigctx->operation, NULL);
++		    break;
++    }
+     if (ret != CKR_OK) {
+         P11PROV_raise(sigctx->provctx, ret, "Failed to setup sigver fallback");
+         goto done;
