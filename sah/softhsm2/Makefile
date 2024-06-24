@@ -26,7 +26,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=Libraries
   TITLE:=SoftHSMv2
   URL:=https://github.com/opendnssec/SoftHSMv2
-  DEPENDS:=+libopenssl +libstdcpp +PACKAGE_p11-kit:p11-kit
+  DEPENDS:=+libopenssl +libstdcpp +PACKAGE_p11-kit:p11-kit +libkcapi +libkeyutils
 endef
 
 define Package/$(PKG_NAME)/description
