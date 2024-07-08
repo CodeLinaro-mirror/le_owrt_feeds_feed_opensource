@@ -48,6 +48,7 @@ CONFIGURE_CMD = ./configure.py
 CONFIGURE_ARGS = \
 	--cpu="$(ARCH)" \
 	--cc-bin="$(TOOLCHAIN_DIR)/bin/$(TARGET_CXX)" \
+	--cc="gcc" \
 	--program-suffix="" \
 	--prefix=$(CONFIGURE_PREFIX) \
 	--exec-prefix=$(CONFIGURE_PREFIX) \
