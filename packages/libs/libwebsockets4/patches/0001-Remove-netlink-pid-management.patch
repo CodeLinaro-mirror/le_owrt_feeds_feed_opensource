@@ -1,0 +1,20 @@
+commit f28b5f378c891a012b78b361f4a58d6a8615535d
+Author: Yassine BELHAJ TAYEB <yassine.belhajtayeb@softathome.com>
+Date:   Mon Jul 29 18:15:52 2024 +0200
+
+    Remove netlink pid management
+
+diff --git a/lib/roles/netlink/ops-netlink.c b/lib/roles/netlink/ops-netlink.c
+index fa3bf29a..abe71ec9 100644
+--- a/lib/roles/netlink/ops-netlink.c
++++ b/lib/roles/netlink/ops-netlink.c
+@@ -525,8 +525,8 @@ rops_pt_init_destroy_netlink(struct lws_context *context,
+ 			"netlink");
+ 
+ 	memset(&sanl, 0, sizeof(sanl));
++	lwsl_err("nl_pid removed\n");
+ 	sanl.nl_family		= AF_NETLINK;
+-	sanl.nl_pid		= (uint32_t)getpid();
+ 	sanl.nl_groups		= RTMGRP_LINK | RTMGRP_IPV4_ROUTE | RTMGRP_IPV4_IFADDR
+ #if defined(LWS_WITH_IPV6)
+ 				  | RTMGRP_IPV6_ROUTE | RTMGRP_IPV6_IFADDR
