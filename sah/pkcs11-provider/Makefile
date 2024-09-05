@@ -5,11 +5,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pkcs11-provider
-PKG_SOURCE_VERSION:=v0.3
+PKG_SOURCE_VERSION:=v0.5
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
-PKG_MIRROR_HASH:=e7637851ed2cbd717722ab4a19115cffb914aba848865ba623cb12fe565f5472
+PKG_MIRROR_HASH:=354623ed659f0251fb8af3a5644ae94b58428e5405adf013595adbd3cc6fba6b
 PKG_SOURCE_URL:=https://github.com/latchset/pkcs11-provider.git
 
 PKG_LICENSE:=Apache_v2
@@ -17,10 +17,8 @@ PKG_LICENSE_FILES:=LICENSES/Apache-2.0.txt
 
 PKG_INSTALL:=1
 
-PKG_FIXUP:=autoreconf
-
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/autotools.mk
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/$(PKG_NAME)
   SECTION:=libs
@@ -35,6 +33,10 @@ define Package/$(PKG_NAME)/description
   This code targets version 3.1 of the interface but should be backwards compatible to previous versions as well.
 endef
 
+define Build/Install
+	$(INSTALL_DIR) $(PKG_INSTALL_DIR)/usr/lib/ossl-modules
+	$(CP) $(MESON_BUILD_DIR)/src/*.so $(PKG_INSTALL_DIR)/usr/lib/ossl-modules/
+endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/ossl-modules
