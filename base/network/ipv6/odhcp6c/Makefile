@@ -29,11 +29,15 @@ ifneq ($(CONFIG_PACKAGE_odhcp6c_ext_cer_id),0)
   CMAKE_OPTIONS += -DEXT_CER_ID=$(CONFIG_PACKAGE_odhcp6c_ext_cer_id)
 endif
 
+ifneq ($(CONFIG_PACKAGE_odhcp6c_libubus),)
+  CMAKE_OPTIONS += -DHAVE_UBUS=on
+endif
+
 define Package/odhcp6c
   SECTION:=net
   CATEGORY:=Network
   TITLE:=Embedded DHCPv6-client for OpenWrt
-  DEPENDS:=@IPV6 +libubox
+  DEPENDS:=@IPV6 +libubox +PACKAGE_odhcp6c_libubus:libubus
 endef
 
 define Package/odhcp6c/config
@@ -41,6 +45,10 @@ define Package/odhcp6c/config
     int "CER-ID Extension ID (0 = disabled)"
     depends on PACKAGE_odhcp6c
     default 0
+  config PACKAGE_odhcp6c_libubus
+    bool "Build with UBUS support."
+    depends on PACKAGE_odhcp6c
+    default y
 endef
 
 define Package/odhcp6c/conffiles
