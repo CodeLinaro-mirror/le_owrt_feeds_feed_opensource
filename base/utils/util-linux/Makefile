@@ -625,7 +625,8 @@ MESON_ARGS += \
 	-Dbuild-liblastlog2=disabled \
 	-Dreadline=disabled \
 	-Dmagic=disabled \
-	-Dncursesw=enabled
+	-Dncursesw=enabled \
+	-Dallow-32bit-time=true
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
