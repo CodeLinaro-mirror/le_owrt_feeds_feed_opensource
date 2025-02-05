@@ -99,7 +99,14 @@ CONFIGURE_ARGS += \
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/libnl3 $(1)/usr/lib/pkgconfig
+	mkdir -p $(1)/usr/include/libnl3/netlink-private
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/libnl3/* $(1)/usr/include/libnl3/
+	$(CP) $(PKG_BUILD_DIR)/include/nl-priv-dynamic-core/object-api.h $(1)/usr/include/libnl3/netlink-private/
+	$(CP) $(PKG_BUILD_DIR)/include/nl-priv-dynamic-core/cache-api.h $(1)/usr/include/libnl3/netlink-private/
+	$(CP) $(PKG_BUILD_DIR)/include/linux-private/linux/netlink.h $(1)/usr/include/libnl3/netlink-private/
+	$(CP) $(PKG_BUILD_DIR)/include/linux-private/linux/types.h $(1)/usr/include/libnl3/netlink-private/
+	$(CP) $(PKG_BUILD_DIR)/include/linux-private/linux/socket.h $(1)/usr/include/libnl3/netlink-private/
+	$(CP) $(PKG_BUILD_DIR)/include/nl-priv-dynamic-core/nl-core.h $(1)/usr/include/libnl3/netlink-private/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/*.pc $(1)/usr/lib/pkgconfig
 
