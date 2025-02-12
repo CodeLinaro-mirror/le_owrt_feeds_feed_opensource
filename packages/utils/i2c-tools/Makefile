@@ -24,7 +24,7 @@ PKG_BUILD_PARALLEL:=1
 PYTHON3_PKG_BUILD:=0
 
 include $(INCLUDE_DIR)/package.mk
-include ../../lang/python/python3-package.mk
+include $(TOPDIR)/feeds/packages/lang/python/python3-version.mk
 
 define Package/i2c/Default
   URL:=https://i2c.wiki.kernel.org/index.php/I2C_Tools
