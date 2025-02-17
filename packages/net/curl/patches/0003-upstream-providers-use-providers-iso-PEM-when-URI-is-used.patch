@@ -1,0 +1,27 @@
+diff --git a/lib/vtls/openssl.c b/lib/vtls/openssl.c
+index 9708c4213..6bf093a34 100644
+--- a/lib/vtls/openssl.c
++++ b/lib/vtls/openssl.c
+@@ -1303,6 +1303,10 @@ int cert_stuff(struct Curl_easy *data,
+       SSL_CTX_set_default_passwd_cb(ctx, passwd_callback);
+     }
+ 
++    /* Override file type PEM to PROV, if the provided cert is a pkcs11 URI, according to providers mechanics */
++    if (file_type == SSL_FILETYPE_PEM && cert_file && is_pkcs11_uri(cert_file)) {
++      file_type = SSL_FILETYPE_PROVIDER;
++    }
+ 
+     switch(file_type) {
+     case SSL_FILETYPE_PEM:
+@@ -1604,6 +1608,11 @@ fail:
+     else
+       file_type = do_file_type(key_type);
+ 
++    /* Override file type PEM to PROV, if the provided key is a pkcs11 URI, according to providers mechanics */
++    if (file_type == SSL_FILETYPE_PEM && key_file && is_pkcs11_uri(key_file)) {
++      file_type = SSL_FILETYPE_PROVIDER;
++    }
++
+     switch(file_type) {
+     case SSL_FILETYPE_PEM:
+       if(cert_done)
