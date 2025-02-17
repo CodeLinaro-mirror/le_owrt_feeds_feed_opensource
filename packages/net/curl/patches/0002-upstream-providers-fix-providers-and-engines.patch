@@ -1,0 +1,66 @@
+diff --git a/lib/vtls/openssl.c b/lib/vtls/openssl.c
+index bde7c9b8a..9708c4213 100644
+--- a/lib/vtls/openssl.c
++++ b/lib/vtls/openssl.c
+@@ -1130,7 +1130,7 @@ static bool is_pkcs11_uri(const char *string)
+ #endif
+ 
+ static CURLcode ossl_set_engine(struct Curl_easy *data, const char *engine);
+-#if !defined(USE_OPENSSL_ENGINE) && defined(OPENSSL_HAS_PROVIDERS)
++#if defined(OPENSSL_HAS_PROVIDERS)
+ static CURLcode ossl_set_provider(struct Curl_easy *data,
+                                   const char *provider);
+ #endif
+@@ -1402,7 +1402,8 @@ int cert_stuff(struct Curl_easy *data,
+       }
+     }
+     break;
+-#elif defined(OPENSSL_HAS_PROVIDERS)
++#endif
++#if defined(OPENSSL_HAS_PROVIDERS)
+       /* fall through to compatible provider */
+     case SSL_FILETYPE_PROVIDER:
+     {
+@@ -1473,7 +1474,8 @@ int cert_stuff(struct Curl_easy *data,
+       }
+     }
+     break;
+-#else
++#endif
++#if !defined(USE_OPENSSL_ENGINE) && !defined(OPENSSL_HAS_PROVIDERS)
+     failf(data, "file type ENG nor PROV for certificate not implemented");
+     return 0;
+ #endif
+@@ -1665,7 +1667,8 @@ fail:
+       }
+     }
+     break;
+-#elif defined(OPENSSL_HAS_PROVIDERS)
++#endif
++#if defined(OPENSSL_HAS_PROVIDERS)
+       /* fall through to compatible provider */
+     case SSL_FILETYPE_PROVIDER:
+     {
+@@ -1750,11 +1753,11 @@ fail:
+       }
+     }
+     break;
+-#else
++#endif
++#if !defined(USE_OPENSSL_ENGINE) && !defined(OPENSSL_HAS_PROVIDERS)
+     failf(data, "file type ENG nor PROV for private key not implemented");
+     return 0;
+ #endif
+-
+     case SSL_FILETYPE_PKCS12:
+       if(!cert_done) {
+         failf(data, "file type P12 for private key not supported");
+@@ -2044,7 +2047,7 @@ static struct curl_slist *ossl_engines_list(struct Curl_easy *data)
+   return list;
+ }
+ 
+-#if !defined(USE_OPENSSL_ENGINE) && defined(OPENSSL_HAS_PROVIDERS)
++#if defined(OPENSSL_HAS_PROVIDERS)
+ /* Selects an OpenSSL crypto provider
+  */
+ static CURLcode ossl_set_provider(struct Curl_easy *data, const char *provider)

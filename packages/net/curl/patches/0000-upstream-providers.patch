@@ -1,0 +1,453 @@
+diff --git a/docs/cmdline-opts/cert-type.md b/docs/cmdline-opts/cert-type.md
+index d78ab8fa4..a280fcc4c 100644
+--- a/docs/cmdline-opts/cert-type.md
++++ b/docs/cmdline-opts/cert-type.md
+@@ -4,7 +4,7 @@ SPDX-License-Identifier: curl
+ Long: cert-type
+ Protocols: TLS
+ Arg: <type>
+-Help: Certificate type (DER/PEM/ENG/P12)
++Help: Certificate type (DER/PEM/ENG/PROV/P12)
+ Category: tls
+ Added: 7.9.3
+ Multi: single
+@@ -18,9 +18,9 @@ Example:
+ 
+ # `--cert-type`
+ 
+-Set type of the provided client certificate. PEM, DER, ENG and P12 are
++Set type of the provided client certificate. PEM, DER, ENG, PROV and P12 are
+ recognized types.
+ 
+ The default type depends on the TLS backend and is usually PEM, however for
+-Secure Transport and Schannel it is P12. If --cert is a pkcs11: URI then ENG is
+-the default type.
++Secure Transport and Schannel it is P12. If --cert is a pkcs11: URI then ENG
++or PROV is the default type (depending on OpenSSL version).
+diff --git a/docs/cmdline-opts/cert.md b/docs/cmdline-opts/cert.md
+index 715fcb831..57979d593 100644
+--- a/docs/cmdline-opts/cert.md
++++ b/docs/cmdline-opts/cert.md
+@@ -32,12 +32,12 @@ In the \<certificate\> portion of the argument, you must escape the character
+ you must escape the double quote character as \" so that it is not recognized
+ as an escape character.
+ 
+-If curl is built against OpenSSL library, and the engine pkcs11 is available,
+-then a PKCS#11 URI (RFC 7512) can be used to specify a certificate located in
+-a PKCS#11 device. A string beginning with `pkcs11:` is interpreted as a
+-PKCS#11 URI. If a PKCS#11 URI is provided, then the --engine option is set as
+-`pkcs11` if none was provided and the --cert-type option is set as `ENG` if
+-none was provided.
++If curl is built against OpenSSL library, and the engine pkcs11 or pkcs11
++provider is available, then a PKCS#11 URI (RFC 7512) can be used to specify a
++certificate located in a PKCS#11 device. A string beginning with `pkcs11:` is
++interpreted as a PKCS#11 URI. If a PKCS#11 URI is provided, then the --engine
++option is set as `pkcs11` if none was provided and the --cert-type option is
++set as `ENG` or `PROV` if none was provided (depending on OpenSSL version).
+ 
+ (iOS and macOS only) If curl is built against Secure Transport, then the
+ certificate string can either be the name of a certificate/private key in the
+diff --git a/docs/cmdline-opts/key.md b/docs/cmdline-opts/key.md
+index 80540ab95..355f4fcd9 100644
+--- a/docs/cmdline-opts/key.md
++++ b/docs/cmdline-opts/key.md
+@@ -21,12 +21,12 @@ Private key filename. Allows you to provide your private key in this separate
+ file. For SSH, if not specified, curl tries the following candidates in order:
+ `~/.ssh/id_rsa`, `~/.ssh/id_dsa`, `./id_rsa`, `./id_dsa`.
+ 
+-If curl is built against OpenSSL library, and the engine pkcs11 is available,
+-then a PKCS#11 URI (RFC 7512) can be used to specify a private key located in
+-a PKCS#11 device. A string beginning with `pkcs11:` is interpreted as a
+-PKCS#11 URI. If a PKCS#11 URI is provided, then the --engine option is set as
+-`pkcs11` if none was provided and the --key-type option is set as `ENG` if
+-none was provided.
++If curl is built against OpenSSL library, and the engine pkcs11 or pkcs11
++provider is available, then a PKCS#11 URI (RFC 7512) can be used to specify a
++private key located in a PKCS#11 device. A string beginning with `pkcs11:` is
++interpreted as a PKCS#11 URI. If a PKCS#11 URI is provided, then the --engine
++option is set as `pkcs11` if none was provided and the --key-type option is
++set as `ENG` or `PROV` if none was provided (depending on OpenSSL version).
+ 
+ If curl is built against Secure Transport or Schannel then this option is
+ ignored for TLS protocols (HTTPS, etc). Those backends expect the private key
+diff --git a/docs/cmdline-opts/proxy-cert-type.md b/docs/cmdline-opts/proxy-cert-type.md
+index c2e8ed1ec..927ec29b7 100644
+--- a/docs/cmdline-opts/proxy-cert-type.md
++++ b/docs/cmdline-opts/proxy-cert-type.md
+@@ -17,10 +17,10 @@ Example:
+ # `--proxy-cert-type`
+ 
+ Set type of the provided client certificate when using HTTPS proxy. PEM, DER,
+-ENG and P12 are recognized types.
++ENG, PROV and P12 are recognized types.
+ 
+ The default type depends on the TLS backend and is usually PEM, however for
+ Secure Transport and Schannel it is P12. If --proxy-cert is a pkcs11: URI then
+-ENG is the default type.
++ENG or PROV is the default type (depending on OpenSSL version).
+ 
+ Equivalent to --cert-type but used in HTTPS proxy context.
+diff --git a/docs/libcurl/opts/CURLOPT_PROXY_SSLKEYTYPE.md b/docs/libcurl/opts/CURLOPT_PROXY_SSLKEYTYPE.md
+index b59ee2623..505f00705 100644
+--- a/docs/libcurl/opts/CURLOPT_PROXY_SSLKEYTYPE.md
++++ b/docs/libcurl/opts/CURLOPT_PROXY_SSLKEYTYPE.md
+@@ -34,7 +34,8 @@ CURLcode curl_easy_setopt(CURL *handle, CURLOPT_PROXY_SSLKEYTYPE, char *type);
+ This option is for connecting to an HTTPS proxy, not an HTTPS server.
+ 
+ Pass a pointer to a null-terminated string as parameter. The string should be
+-the format of your private key. Supported formats are "PEM", "DER" and "ENG".
++the format of your private key. Supported formats are "PEM", "DER", "ENG" and
++"PROV" (the latter added in curl 8.12.0).
+ 
+ The application does not have to keep the string around after setting this
+ option.
+diff --git a/docs/libcurl/opts/CURLOPT_SSLKEYTYPE.md b/docs/libcurl/opts/CURLOPT_SSLKEYTYPE.md
+index 73e1a7547..51022ec74 100644
+--- a/docs/libcurl/opts/CURLOPT_SSLKEYTYPE.md
++++ b/docs/libcurl/opts/CURLOPT_SSLKEYTYPE.md
+@@ -32,12 +32,18 @@ CURLcode curl_easy_setopt(CURL *handle, CURLOPT_SSLKEYTYPE, char *type);
+ # DESCRIPTION
+ 
+ Pass a pointer to a null-terminated string as parameter. The string should be
+-the format of your private key. Supported formats are "PEM", "DER" and "ENG".
++the format of your private key. Supported formats are "PEM", "DER", "ENG" and
++"PROV".
+ 
+ The format "ENG" enables you to load the private key from a crypto engine. In
+ this case CURLOPT_SSLKEY(3) is used as an identifier passed to the engine. You
+-have to set the crypto engine with CURLOPT_SSLENGINE(3). "DER" format key file
+-currently does not work because of a bug in OpenSSL.
++have to set the crypto engine with CURLOPT_SSLENGINE(3).
++
++The format "PROV" enables you to load the private key from a crypto provider
++(Added in 8.12.0). In this case CURLOPT_SSLKEY(3) is used as an identifier
++passed to the provider.
++
++The "DER" format does not work with OpenSSL.
+ 
+ The application does not have to keep the string around after setting this
+ option.
+diff --git a/lib/urldata.h b/lib/urldata.h
+index f34aa591c..c64d62c2b 100644
+--- a/lib/urldata.h
++++ b/lib/urldata.h
+@@ -1258,6 +1258,10 @@ struct UrlState {
+ #if defined(USE_OPENSSL)
+   /* void instead of ENGINE to avoid bleeding OpenSSL into this header */
+   void *engine;
++  /* this is just a flag -- we do not need to reference the provider in any
++   * way as OpenSSL takes care of that */
++  BIT(provider);
++  BIT(provider_failed);
+ #endif /* USE_OPENSSL */
+   struct curltime expiretime; /* set this with Curl_expire() only */
+   struct Curl_tree timenode; /* for the splay stuff */
+diff --git a/lib/vtls/openssl.c b/lib/vtls/openssl.c
+index 8a65491b2..fe41ef255 100644
+--- a/lib/vtls/openssl.c
++++ b/lib/vtls/openssl.c
+@@ -103,6 +103,13 @@
+ #include <openssl/engine.h>
+ #endif
+ 
++#if OPENSSL_VERSION_NUMBER >= 0x03000000fL && !defined(OPENSSL_NO_UI_CONSOLE)
++#include <openssl/provider.h>
++#include <openssl/store.h>
++/* this is used in the following conditions to make them easier to read */
++#define OPENSSL_HAS_PROVIDERS
++#endif
++
+ #include "warnless.h"
+ 
+ /* The last #include files should be: */
+@@ -124,7 +131,7 @@
+ #error "OPENSSL_VERSION_NUMBER not defined"
+ #endif
+ 
+-#ifdef USE_OPENSSL_ENGINE
++#if defined(USE_OPENSSL_ENGINE) || defined(OPENSSL_HAS_PROVIDERS)
+ #include <openssl/ui.h>
+ #endif
+ 
+@@ -1049,6 +1056,9 @@ static CURLcode ossl_seed(struct Curl_easy *data)
+ #ifndef SSL_FILETYPE_PKCS12
+ #define SSL_FILETYPE_PKCS12 43
+ #endif
++#ifndef SSL_FILETYPE_PROVIDER
++#define SSL_FILETYPE_PROVIDER 44
++#endif
+ static int do_file_type(const char *type)
+ {
+   if(!type || !type[0])
+@@ -1057,6 +1067,8 @@ static int do_file_type(const char *type)
+     return SSL_FILETYPE_PEM;
+   if(strcasecompare(type, "DER"))
+     return SSL_FILETYPE_ASN1;
++  if(strcasecompare(type, "PROV"))
++    return SSL_FILETYPE_PROVIDER;
+   if(strcasecompare(type, "ENG"))
+     return SSL_FILETYPE_ENGINE;
+   if(strcasecompare(type, "P12"))
+@@ -1064,7 +1076,7 @@ static int do_file_type(const char *type)
+   return -1;
+ }
+ 
+-#ifdef USE_OPENSSL_ENGINE
++#if defined(USE_OPENSSL_ENGINE) || defined(OPENSSL_HAS_PROVIDERS)
+ /*
+  * Supply default password to the engine user interface conversation.
+  * The password is passed by OpenSSL engine from ENGINE_load_private_key()
+@@ -1118,6 +1130,10 @@ static bool is_pkcs11_uri(const char *string)
+ #endif
+ 
+ static CURLcode ossl_set_engine(struct Curl_easy *data, const char *engine);
++#if !defined(USE_OPENSSL_ENGINE) && defined(OPENSSL_HAS_PROVIDERS)
++static CURLcode ossl_set_provider(struct Curl_easy *data,
++                                  const char *provider);
++#endif
+ 
+ static int
+ SSL_CTX_use_certificate_blob(SSL_CTX *ctx, const struct curl_blob *blob,
+@@ -1273,7 +1289,8 @@ int cert_stuff(struct Curl_easy *data,
+ 
+   int file_type = do_file_type(cert_type);
+ 
+-  if(cert_file || cert_blob || (file_type == SSL_FILETYPE_ENGINE)) {
++  if(cert_file || cert_blob || (file_type == SSL_FILETYPE_ENGINE) ||
++     (file_type == SSL_FILETYPE_PROVIDER)) {
+     SSL *ssl;
+     X509 *x509;
+     int cert_done = 0;
+@@ -1385,8 +1402,79 @@ int cert_stuff(struct Curl_easy *data,
+       }
+     }
+     break;
++#elif defined(OPENSSL_HAS_PROVIDERS)
++      /* fall through to compatible provider */
++    case SSL_FILETYPE_PROVIDER:
++    {
++      /* Implicitly use pkcs11 provider if none was provided and the
++       * cert_file is a PKCS#11 URI */
++      if(!data->state.provider) {
++        if(is_pkcs11_uri(cert_file)) {
++          if(ossl_set_provider(data, "pkcs11") != CURLE_OK) {
++            return 0;
++          }
++        }
++      }
++
++      if(data->state.provider) {
++        /* Load the certificate from the provider */
++        OSSL_STORE_CTX *store = NULL;
++        OSSL_STORE_INFO *info = NULL;
++        X509 *cert = NULL;
++        store = OSSL_STORE_open(cert_file, NULL, NULL, NULL, NULL);
++        if(!store) {
++          failf(data, "Failed to open OpenSSL store: %s",
++                ossl_strerror(ERR_get_error(), error_buffer,
++                              sizeof(error_buffer)));
++          return 0;
++        }
++        if(OSSL_STORE_expect(store, OSSL_STORE_INFO_CERT) != 1) {
++          failf(data, "Failed to set store preference. Ignoring the error: %s",
++                ossl_strerror(ERR_get_error(), error_buffer,
++                              sizeof(error_buffer)));
++        }
++
++        for(info = OSSL_STORE_load(store);
++            info != NULL;
++            info = OSSL_STORE_load(store)) {
++          int ossl_type = OSSL_STORE_INFO_get_type(info);
++
++          if(ossl_type == OSSL_STORE_INFO_CERT) {
++            cert = OSSL_STORE_INFO_get1_CERT(info);
++          }
++          else {
++            failf(data, "Ignoring object not matching our type: %d",
++                  ossl_type);
++            OSSL_STORE_INFO_free(info);
++            continue;
++          }
++          OSSL_STORE_INFO_free(info);
++          break;
++        }
++        OSSL_STORE_close(store);
++        if(!cert) {
++          failf(data, "No cert found in the openssl store: %s",
++                ossl_strerror(ERR_get_error(), error_buffer,
++                              sizeof(error_buffer)));
++          goto fail;
++        }
++
++        if(SSL_CTX_use_certificate(ctx, cert) != 1) {
++          failf(data, "unable to set client certificate [%s]",
++                ossl_strerror(ERR_get_error(), error_buffer,
++                              sizeof(error_buffer)));
++          return 0;
++        }
++        X509_free(cert); /* we do not need the handle any more... */
++      }
++      else {
++        failf(data, "crypto provider not set, cannot load certificate");
++        return 0;
++      }
++    }
++    break;
+ #else
+-    failf(data, "file type ENG for certificate not implemented");
++    failf(data, "file type ENG nor PROV for certificate not implemented");
+     return 0;
+ #endif
+ 
+@@ -1577,10 +1665,96 @@ fail:
+       }
+     }
+     break;
++#elif defined(OPENSSL_HAS_PROVIDERS)
++      /* fall through to compatible provider */
++    case SSL_FILETYPE_PROVIDER:
++    {
++      /* Implicitly use pkcs11 provider if none was provided and the
++       * cert_file is a PKCS#11 URI */
++      if(!data->state.provider) {
++        if(is_pkcs11_uri(cert_file)) {
++          if(ossl_set_provider(data, "pkcs11") != CURLE_OK) {
++            return 0;
++          }
++        }
++      }
++
++      if(data->state.provider) {
++        /* Load the private key from the provider */
++        EVP_PKEY *priv_key = NULL;
++        OSSL_STORE_CTX *store = NULL;
++        OSSL_STORE_INFO *info = NULL;
++        UI_METHOD *ui_method =
++          UI_create_method((char *)"curl user interface");
++        if(!ui_method) {
++          failf(data, "unable do create " OSSL_PACKAGE
++                " user-interface method");
++          return 0;
++        }
++        UI_method_set_opener(ui_method, UI_method_get_opener(UI_OpenSSL()));
++        UI_method_set_closer(ui_method, UI_method_get_closer(UI_OpenSSL()));
++        UI_method_set_reader(ui_method, ssl_ui_reader);
++        UI_method_set_writer(ui_method, ssl_ui_writer);
++
++        store = OSSL_STORE_open(key_file, ui_method, NULL, NULL, NULL);
++        if(!store) {
++          failf(data, "Failed to open OpenSSL store: %s",
++                ossl_strerror(ERR_get_error(), error_buffer,
++                              sizeof(error_buffer)));
++          return 0;
++        }
++        if(OSSL_STORE_expect(store, OSSL_STORE_INFO_PKEY) != 1) {
++          failf(data, "Failed to set store preference. Ignoring the error: %s",
++                ossl_strerror(ERR_get_error(), error_buffer,
++                              sizeof(error_buffer)));
++        }
++
++        for(info = OSSL_STORE_load(store);
++            info != NULL;
++            info = OSSL_STORE_load(store)) {
++          int ossl_type = OSSL_STORE_INFO_get_type(info);
++
++          if(ossl_type == OSSL_STORE_INFO_PKEY) {
++            priv_key = OSSL_STORE_INFO_get1_PKEY(info);
++          }
++          else {
++            failf(data, "Ignoring object not matching our type: %d",
++                  ossl_type);
++            OSSL_STORE_INFO_free(info);
++            continue;
++          }
++          OSSL_STORE_INFO_free(info);
++          break;
++        }
++        OSSL_STORE_close(store);
++        UI_destroy_method(ui_method);
++        if(!priv_key) {
++          failf(data, "No private key found in the openssl store: %s",
++                ossl_strerror(ERR_get_error(), error_buffer,
++                              sizeof(error_buffer)));
++          goto fail;
++        }
++
++        if(SSL_CTX_use_PrivateKey(ctx, priv_key) != 1) {
++          failf(data, "unable to set private key [%s]",
++                ossl_strerror(ERR_get_error(), error_buffer,
++                              sizeof(error_buffer)));
++          EVP_PKEY_free(priv_key);
++          return 0;
++        }
++        EVP_PKEY_free(priv_key); /* we do not need the handle any more... */
++      }
++      else {
++        failf(data, "crypto provider not set, cannot load private key");
++        return 0;
++      }
++    }
++    break;
+ #else
+-    failf(data, "file type ENG for private key not supported");
++    failf(data, "file type ENG nor PROV for private key not implemented");
+     return 0;
+ #endif
++
+     case SSL_FILETYPE_PKCS12:
+       if(!cert_done) {
+         failf(data, "file type P12 for private key not supported");
+@@ -1870,6 +2044,40 @@ static struct curl_slist *ossl_engines_list(struct Curl_easy *data)
+   return list;
+ }
+ 
++#if !defined(USE_OPENSSL_ENGINE) && defined(OPENSSL_HAS_PROVIDERS)
++/* Selects an OpenSSL crypto provider
++ */
++static CURLcode ossl_set_provider(struct Curl_easy *data, const char *provider)
++{
++  OSSL_PROVIDER *pkcs11_provider = NULL;
++  char error_buffer[256];
++
++  if(OSSL_PROVIDER_available(NULL, provider)) {
++    /* already loaded through the configuration - no action needed */
++    data->state.provider = TRUE;
++    return CURLE_OK;
++  }
++  if(data->state.provider_failed) {
++    return CURLE_SSL_ENGINE_NOTFOUND;
++  }
++
++  pkcs11_provider = OSSL_PROVIDER_try_load(NULL, provider, 1);
++  if(!pkcs11_provider) {
++    failf(data, "Failed to initialize provider: %s",
++          ossl_strerror(ERR_get_error(), error_buffer,
++                        sizeof(error_buffer)));
++    /* Do not attempt to load it again */
++    data->state.provider_failed = TRUE;
++    /* FIXME not the right error but much less fuss than creating a new
++     * public one */
++    return CURLE_SSL_ENGINE_NOTFOUND;
++  }
++  data->state.provider = TRUE;
++  return CURLE_OK;
++}
++#endif
++
++
+ static CURLcode ossl_shutdown(struct Curl_cfilter *cf,
+                               struct Curl_easy *data,
+                               bool send_shutdown, bool *done)
+diff --git a/src/tool_listhelp.c b/src/tool_listhelp.c
+index a825a0315..afe43a873 100644
+--- a/src/tool_listhelp.c
++++ b/src/tool_listhelp.c
+@@ -67,7 +67,7 @@ const struct helptxt helptext[] = {
+    "Verify server cert status OCSP-staple",
+    CURLHELP_TLS},
+   {"    --cert-type <type>",
+-   "Certificate type (DER/PEM/ENG/P12)",
++   "Certificate type (DER/PEM/ENG/PROV/P12)",
+    CURLHELP_TLS},
+   {"    --ciphers <list of ciphers>",
+    "SSL ciphers to use",
