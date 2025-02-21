@@ -289,7 +289,7 @@ $(eval $(call BuildPlugin,webdav,WebDAV,+PACKAGE_lighttpd-mod-webdav:libsqlite3 
 $(eval $(call BuildPlugin,webdav_min,WebDAV,,30))
 $(eval $(call BuildPlugin,wolfssl,TLS using wolfssl,@LIGHTTPD_SSL +PACKAGE_lighttpd-mod-wolfssl:libwolfssl,30))
 $(eval $(call BuildPlugin,wstunnel,Websocket tunneling,$(cryptolibdep),30))
-$(eval $(call BuildPlugin,csrf,Cross site request forgery protection,+PACKAGE_lighttpd-mod-csrf:,30))
+$(eval $(call BuildPlugin,csrf,Cross site request forgery protection,,30))
 
 
 # (similar to BuildPlugin, but without associated .so)
