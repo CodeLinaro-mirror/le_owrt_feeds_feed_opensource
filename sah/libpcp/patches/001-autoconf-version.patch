@@ -1,0 +1,12 @@
+diff --git a/configure.ac b/configure.ac
+index 0c5b0c8..0e51bf4 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,6 +1,6 @@
+ AC_INIT([pcp-client],[2.0],[aeon@cisco.com])
+ AC_CANONICAL_TARGET
+-AC_PREREQ([2.71])
++AC_PREREQ([2.69])
+ AM_INIT_AUTOMAKE([-Wall -Werror foreign color-tests subdir-objects])
+ #AM_SUBDIR_OBJECTS([yes])
+ AM_PROG_AR
