@@ -4,10 +4,10 @@ PKG_NAME:=libpcp
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=1c783fb83516ebf10ebebd023a490255d35f34fd
-PKG_SOURCE_DATE:=2022-02-22
-PKG_SOURCE_URL:=https://github.com/libpcp/pcp
-PKG_MIRROR_HASH:=6ddc6b45d44435f1c530687499429b1479247cdd235730913abb77ba163d778a
+PKG_SOURCE_VERSION:=46341d68a605558c765f01e2b28a3bfa04002eb6
+PKG_SOURCE_DATE:=2025-03-18
+PKG_SOURCE_URL:=https://github.com/libpcpnatpmp/libpcpnatpmp
+PKG_MIRROR_HASH:=370f4fd933de17084c9e6939d8fde4f0b82355253597535b14260262fb20b002
 
 PKG_LICENSE:=BSD-2-Clause
 PKG_LICENSE_FILES:=COPYING
@@ -23,7 +23,7 @@ define Package/$(PKG_NAME)
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=PCP client library implements client side of PCP
-  URL:=https://github.com/libpcp/pcp
+  URL:=https://github.com/libpcpnatpmp/libpcpnatpmp
   DEPENDS:=
 endef
 
