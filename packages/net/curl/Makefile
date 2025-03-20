@@ -74,6 +74,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_OPENSSL_WITH_NPN)
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/host-build.mk
 
 define Package/curl/Default
   SECTION:=net
@@ -163,6 +164,21 @@ CONFIGURE_ARGS += \
 	$(call autoconf_bool,CONFIG_LIBCURL_UNIX_SOCKETS,unix-sockets) \
 	$(call autoconf_bool,CONFIG_LIBCURL_VERBOSE,verbose) \
 
+HOST_CONFIGURE_ARGS += \
+	--disable-debug \
+	--disable-docs \
+	--disable-ares \
+	--enable-shared \
+	--enable-static \
+	--disable-manual \
+	--without-nss \
+	--without-librtmp \
+	--without-ca-path \
+	--without-libpsl \
+	--without-zstd \
+	--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt \
+	--with-openssl
+
 define Build/InstallDev
 	$(INSTALL_DIR) $(2)/bin $(1)/usr/bin $(1)/usr/include $(1)/usr/lib $(1)/usr/lib/pkgconfig
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/curl-config $(1)/usr/bin/
@@ -186,3 +202,4 @@ endef
 
 $(eval $(call BuildPackage,libcurl))
 $(eval $(call BuildPackage,curl))
+$(eval $(call HostBuild))
