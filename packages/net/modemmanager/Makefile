@@ -11,6 +11,11 @@ PKG_NAME:=modemmanager
 PKG_VERSION:=1.22.0
 PKG_RELEASE:=21
 
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.freedesktop.org/mobile-broadband/ModemManager.git
+PKG_SOURCE_VERSION:=$(PKG_VERSION)
+PKG_MIRROR_HASH:=72d129a00d51f0acf4c421f02dd342728ca42980bd9644e3c9a69ca0792fd60b
+
 PKG_MAINTAINER:=Nicholas Smith <nicholas@nbembedded.com>
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=COPYING
