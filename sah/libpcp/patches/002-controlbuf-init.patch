@@ -1,0 +1,13 @@
+diff --git a/libpcp/src/net/pcp_socket.c b/libpcp/src/net/pcp_socket.c
+index 27c46f4..bf109b9 100644
+--- a/libpcp/src/net/pcp_socket.c
++++ b/libpcp/src/net/pcp_socket.c
+@@ -341,7 +341,7 @@ static ssize_t pcp_socket_recvfrom_impl(PCP_SOCKET sock, void *buf, size_t len,
+ 
+ #ifndef PCP_SOCKET_IS_VOIDPTR
+ #if defined(IPV6_PKTINFO) && defined(IP_PKTINFO)
+-    char control_buf[1024];
++    char control_buf[1024] = {0};
+ 
+ #ifndef WIN32
+     struct msghdr msg;
