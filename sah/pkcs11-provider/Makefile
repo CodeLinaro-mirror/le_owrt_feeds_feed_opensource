@@ -5,11 +5,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pkcs11-provider
-PKG_SOURCE_VERSION:=v0.5
+PKG_SOURCE_VERSION:=v1.0
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
-PKG_MIRROR_HASH:=354623ed659f0251fb8af3a5644ae94b58428e5405adf013595adbd3cc6fba6b
+PKG_MIRROR_HASH:=87beed74f6a977cbd4cee9f28103d37febd938085cadc93a57a39fb189cb779f
 PKG_SOURCE_URL:=https://github.com/latchset/pkcs11-provider.git
 
 PKG_LICENSE:=Apache_v2
