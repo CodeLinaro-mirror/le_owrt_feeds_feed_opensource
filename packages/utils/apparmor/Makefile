@@ -162,12 +162,9 @@ define Package/apparmor-utils/install
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/parser/parser.conf $(1)/etc/apparmor/
 	$(INSTALL_DATA) $(PKG_INSTALL_DIR)-utils/etc/apparmor/severity.db $(1)/etc/apparmor/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)-utils/sbin/apparmor_parser $(1)/sbin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)-utils/usr/bin/{aa-exec,aa-easyprof,aa-enabled,aa-features-abi} $(1)/usr/sbin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)-utils/usr/sbin/{aa-audit,aa-autodep,aa-cleanprof,aa-complain,aa-decode,aa-disable,aa-enforce,aa-genprof,aa-logprof,aa-mergeprof,aa-remove-unknown,aa-status,aa-unconfined} $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)-utils/usr/bin/{aa-exec,aa-enabled,aa-features-abi} $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)-utils/usr/sbin/aa-status $(1)/usr/sbin/
 	$(LN) aa-status $(1)/usr/sbin/apparmor_status
-	$(INSTALL_DIR) $(1)/usr/share/apparmor/easyprof/templates $(1)/usr/share/apparmor/easyprof/policygroups
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)-utils/usr/share/apparmor/easyprof/templates/* $(1)/usr/share/apparmor/easyprof/templates/
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)-utils/usr/share/apparmor/easyprof/policygroups/* $(1)/usr/share/apparmor/easyprof/policygroups/
 	$(INSTALL_DIR) $(1)/etc/init.d $(1)/lib/functions
 	$(INSTALL_BIN) ./files/apparmor.sh $(1)/lib/functions/
 	$(INSTALL_BIN) ./files/apparmor.init $(1)/etc/init.d/apparmor
