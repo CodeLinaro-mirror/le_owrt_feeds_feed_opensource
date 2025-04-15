@@ -1,0 +1,12 @@
+--- a/parser/parser.conf
++++ b/parser/parser.conf
+@@ -31,7 +31,8 @@
+ # match-string "pattern=aadfa audit perms=crwxamlk/ user::other"
+ 
+ ## Turn creating/updating of the cache on by default
+-#write-cache
++write-cache
++cache-loc=/cfg/apparmor/
+ 
+ ## Show cache hits
+ #show-cache
