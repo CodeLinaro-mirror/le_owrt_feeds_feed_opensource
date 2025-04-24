@@ -13,7 +13,7 @@ PKG_RELEASE:=1
 PKG_VERSION:=gen_2.90_v0.2.4
 PKG_SOURCE:=dnsmasq-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/dnsmasq/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=11d06cd70889f7a9d712a56572e61667e476f11fdf7d8b2902a3bbcccd389856
 PKG_BUILD_DIR:=$(BUILD_DIR)/dnsmasq-$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-2.0
