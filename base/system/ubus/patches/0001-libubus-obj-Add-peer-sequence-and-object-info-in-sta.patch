@@ -1,0 +1,67 @@
+From 84712ca264cab32aa8370fc77b312ea59fac5f4e Mon Sep 17 00:00:00 2001
+From: Alexander Van Parys <alexander.vanparys@softathome.com>
+Date: Fri, 18 Jul 2025 14:28:43 +0200
+Subject: [PATCH] libubus-obj: Add peer,sequence and object info in status
+ messages
+
+It is possible to have a situation where a response to a request via
+ubus is never received.
+
+The issue occurs in the following scenario:
+ 1) Client A does a lookup for object X (provided by client B) and gets a valid  ID from ubusd
+ 2) Client A sends a request on object X to ubusd
+ 3) Client B sends a remove_object message to ubusd (for object X)
+ 4) Ubusd forwards the request to client B
+ 5) The request from #4 is queued in client B (at ubus level) because B
+    is waiting for a reply for request #3.
+ 6) Ubusd replies OK to B in response to #3. B removes the ubus object X
+    internally as well.
+ 7) B processes the ubus request #4:
+   1) The requested object, X, is no longer known at ubus level.
+   2) B sends a status message with status UBUS_STATUS_NOT_FOUND to
+      ubusd, without peer, sequence or object info.
+ 8) Ubusd receives the status message and drops it, since it does not
+    know where to send it to.
+ 9) Client A never receives a response for request #2 and waits until a
+    timeout happens.
+
+Adding the peer, sequence and object information in the status message
+enables ubusd to forward the UBUS_STATUS_NOT_FOUND message to the
+correct client. Client A will now receive an error status instead of
+nothing, unblocking the system.
+
+Issue: HOP-10497 [Ubus] Insufficient information in status response messages
+---
+ libubus-obj.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/libubus-obj.c b/libubus-obj.c
+index 29cbb2b..1ff6a11 100644
+--- a/libubus-obj.c
++++ b/libubus-obj.c
+@@ -62,6 +62,12 @@ ubus_process_invoke(struct ubus_context *ctx, struct ubus_msghdr *hdr,
+ 	int ret;
+ 	bool no_reply = false;
+ 
++    // Fill req fields with available info first
++    // This will allow ubusd to forward the status message to the actual sender.
++    req.peer = hdr->peer;
++    req.seq = hdr->seq;
++    req.object = blob_get_u32(attrbuf[UBUS_ATTR_OBJID]);
++
+ 	if (!obj) {
+ 		ret = UBUS_STATUS_NOT_FOUND;
+ 		goto send;
+@@ -75,9 +81,6 @@ ubus_process_invoke(struct ubus_context *ctx, struct ubus_msghdr *hdr,
+ 	if (attrbuf[UBUS_ATTR_NO_REPLY])
+ 		no_reply = blob_get_int8(attrbuf[UBUS_ATTR_NO_REPLY]);
+ 
+-	req.peer = hdr->peer;
+-	req.seq = hdr->seq;
+-	req.object = obj->id;
+ 	if (attrbuf[UBUS_ATTR_USER] && attrbuf[UBUS_ATTR_GROUP]) {
+ 		req.acl.user = blobmsg_get_string(attrbuf[UBUS_ATTR_USER]);
+ 		req.acl.group = blobmsg_get_string(attrbuf[UBUS_ATTR_GROUP]);
+-- 
+2.34.1
+
