@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sysstat
-PKG_VERSION:=12.7.5
+PKG_VERSION:=12.7.8
 PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://sysstat.github.io/sysstat-packages
-PKG_HASH:=57664040a549d33bb06a1121c7124d4cadd9b8b35f815856c194393047cd4d6b
+PKG_HASH:=fce51c768a9babfc871e1896409a17be7017460730a796b36b502dbaac0ed2b9
 
 PKG_MAINTAINER:=Marko Ratkaj <markoratkaj@gmail.com>
 PKG_LICENSE:=GPL-2.0-or-later
