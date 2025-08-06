@@ -1,4 +1,4 @@
-From 84712ca264cab32aa8370fc77b312ea59fac5f4e Mon Sep 17 00:00:00 2001
+From 5d0e6ed0ecdc8191d32814ab712701bf9660550c Mon Sep 17 00:00:00 2001
 From: Alexander Van Parys <alexander.vanparys@softathome.com>
 Date: Fri, 18 Jul 2025 14:28:43 +0200
 Subject: [PATCH] libubus-obj: Add peer,sequence and object info in status
@@ -32,32 +32,38 @@ nothing, unblocking the system.
 
 Issue: HOP-10497 [Ubus] Insufficient information in status response messages
 ---
- libubus-obj.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ libubus-obj.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/libubus-obj.c b/libubus-obj.c
-index 29cbb2b..1ff6a11 100644
+index 4a56110..bc21a2b 100644
 --- a/libubus-obj.c
 +++ b/libubus-obj.c
 @@ -62,6 +62,12 @@ ubus_process_invoke(struct ubus_context *ctx, struct ubus_msghdr *hdr,
  	int ret;
  	bool no_reply = false;
  
-+    // Fill req fields with available info first
-+    // This will allow ubusd to forward the status message to the actual sender.
-+    req.peer = hdr->peer;
-+    req.seq = hdr->seq;
-+    req.object = blob_get_u32(attrbuf[UBUS_ATTR_OBJID]);
++	// Fill req fields with available info first
++	// This will allow ubusd to forward the status message to the actual sender.
++	req.peer = hdr->peer;
++	req.seq = hdr->seq;
++	req.object = blob_get_u32(attrbuf[UBUS_ATTR_OBJID]);
 +
- 	if (!obj) {
+ 	if ((!obj && !ubus_context_is_channel(ctx)) ||
+ 	    (!ctx->request_handler && ubus_context_is_channel(ctx))) {
  		ret = UBUS_STATUS_NOT_FOUND;
- 		goto send;
-@@ -75,9 +81,6 @@ ubus_process_invoke(struct ubus_context *ctx, struct ubus_msghdr *hdr,
+@@ -76,15 +82,11 @@ ubus_process_invoke(struct ubus_context *ctx, struct ubus_msghdr *hdr,
  	if (attrbuf[UBUS_ATTR_NO_REPLY])
  		no_reply = blob_get_int8(attrbuf[UBUS_ATTR_NO_REPLY]);
  
 -	req.peer = hdr->peer;
 -	req.seq = hdr->seq;
+-
+ 	if (ubus_context_is_channel(ctx)) {
+ 		handler = ctx->request_handler;
+ 		goto found;
+ 	}
+ 
 -	req.object = obj->id;
  	if (attrbuf[UBUS_ATTR_USER] && attrbuf[UBUS_ATTR_GROUP]) {
  		req.acl.user = blobmsg_get_string(attrbuf[UBUS_ATTR_USER]);
