@@ -1,0 +1,116 @@
+diff --git a/NEWS b/NEWS
+index a7f23cb3..609e490a 100644
+--- a/NEWS
++++ b/NEWS
+@@ -500,7 +500,7 @@ Release 0.99.2.0
+ * pam_xauth: Look for xauth executable in multiple places
+ * pam_unix: Disable user check in unix_chkpwd only if real uid
+   is 0 (CVE-2005-2977). Log failed password check attempt.
+-* pam_env: Support /etc/environment again, but don't treat it as
++* pam_env: Support /etc/pam_environment again, but don't treat it as
+   error if it is missing.
+ * pam_userdb: Fix memory leak.
+ 
+diff --git a/modules/module-meson.build b/modules/module-meson.build
+index dce38b90..4fbb955c 100644
+--- a/modules/module-meson.build
++++ b/modules/module-meson.build
+@@ -148,7 +148,7 @@ if module == 'pam_access'
+   pam_module_mans += [['access.conf.5', []]]
+ endif
+ if module == 'pam_env'
+-  pam_module_mans += [['pam_env.conf.5', ['environment.5']]]
++  pam_module_mans += [['pam_env.conf.5', ['pam_environment.5']]]
+ endif
+ if module == 'pam_group'
+   pam_module_mans += [['group.conf.5', []]]
+@@ -267,7 +267,7 @@ if module == 'pam_env'
+     install_tag: 'config',
+   )
+   install_data(
+-    'environment',
++    'pam_environment',
+     install_dir: vendor_sysconfdir,
+     install_tag: 'config',
+   )
+diff --git a/modules/pam_env/pam_env.8.xml b/modules/pam_env/pam_env.8.xml
+index c7889e0f..bc734138 100644
+--- a/modules/pam_env/pam_env.8.xml
++++ b/modules/pam_env/pam_env.8.xml
+@@ -82,23 +82,23 @@
+       If this file has not been defined, the settings are read from the
+       files <filename>/etc/security/environment</filename> and
+       <filename>/etc/security/environment.d/*</filename>.
+-      If the file <filename>/etc/environment</filename> does not exist, the
++      If the file <filename>/etc/pam_environment</filename> does not exist, the
+       settings are read from the files <filename>%vendordir%/environment</filename>,
+       <filename>%vendordir%/environment.d/*</filename> and
+-      <filename>/etc/environment.d/*</filename> in that order.
++      <filename>/etc/pam_environment.d/*</filename> in that order.
+       And last but not least, with the <emphasis>readenv</emphasis> option this mechanism can
+       be completely disabled.
+     </para>
+     <para condition="with_vendordir_and_without_econf">
+-      Second a file (<filename>/etc/environment</filename> by default) with simple
++      Second a file (<filename>/etc/pam_environment</filename> by default) with simple
+       <emphasis>KEY=VAL</emphasis> pairs on separate lines will be read.
+-      If this file does not exist, <filename>%vendordir%/etc/environment</filename> is used.
++      If this file does not exist, <filename>%vendordir%/etc/pam_environment</filename> is used.
+       With the <emphasis>envfile</emphasis> option an alternate file can be specified,
+       which overrules all other files.
+       And with the <emphasis>readenv</emphasis> option this can be completely disabled.
+     </para>
+     <para condition="without_vendordir">
+-      Second a file (<filename>/etc/environment</filename> by default) with simple
++      Second a file (<filename>/etc/pam_environment</filename> by default) with simple
+       <emphasis>KEY=VAL</emphasis> pairs on separate lines will be read.
+       With the <emphasis>envfile</emphasis> option an alternate file can be specified.
+       And with the <emphasis>readenv</emphasis> option this can be completely disabled.
+@@ -288,7 +288,7 @@
+       </varlistentry>
+       <varlistentry>
+         <term condition="with_vendordir">%vendordir%/environment</term>
+-        <term>/etc/environment</term>
++        <term>/etc/pam_environment</term>
+         <listitem>
+           <para>Default environment file</para>
+         </listitem>
+diff --git a/modules/pam_env/pam_env.c b/modules/pam_env/pam_env.c
+index 496c8943..8f1a640a 100644
+--- a/modules/pam_env/pam_env.c
++++ b/modules/pam_env/pam_env.c
+@@ -43,7 +43,7 @@ typedef struct var {
+   char *override;
+ } VAR;
+ 
+-#define DEFAULT_ETC_ENVFILE     "/etc/environment"
++#define DEFAULT_ETC_ENVFILE     "/etc/pam_environment"
+ #ifdef VENDORDIR
+ #define VENDOR_DEFAULT_ETC_ENVFILE (VENDORDIR "/environment")
+ #endif
+diff --git a/modules/pam_env/pam_env.conf.5.xml b/modules/pam_env/pam_env.conf.5.xml
+index 46df480f..4076203a 100644
+--- a/modules/pam_env/pam_env.conf.5.xml
++++ b/modules/pam_env/pam_env.conf.5.xml
+@@ -67,7 +67,7 @@
+     </para>
+ 
+     <para condition="with_vendordir">
+-      The <filename>%vendordir%/environment</filename> and <filename>/etc/environment</filename> files specify
++      The <filename>%vendordir%/environment</filename> and <filename>/etc/pam_environment</filename> files specify
+       the environment variables to be set. These files must consist of simple
+       <emphasis>NAME=VALUE</emphasis> pairs on separate lines.
+       The <citerefentry><refentrytitle>pam_env</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+@@ -75,7 +75,7 @@
+       file.
+     </para>
+     <para condition="without_vendordir">
+-      The <filename>/etc/environment</filename> file specifies
++      The <filename>/etc/pam_environment</filename> file specifies
+       the environment variables to be set. The file must consist of simple
+       <emphasis>NAME=VALUE</emphasis> pairs on separate lines.
+       The <citerefentry><refentrytitle>pam_env</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+diff --git a/modules/pam_env/environment b/modules/pam_env/pam_environment
+similarity index 100%
+rename from modules/pam_env/environment
+rename to modules/pam_env/pam_environment
