@@ -39,7 +39,7 @@ define Package/apparmor-utils
   SECTION:=utils
   CATEGORY:=Utilities
   SUBMENU:=AppArmor
-  DEPENDS:=$(INTL_DEPENDS) +libapparmor +ss +findutils-xargs
+  DEPENDS:=$(INTL_DEPENDS) +libapparmor +ss
 endef
 
 define Package/apparmor-profiles

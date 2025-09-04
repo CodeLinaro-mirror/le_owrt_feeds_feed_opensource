@@ -124,8 +124,6 @@ __parse_profiles_dir() {
 
 	local nprocs=$(cat /proc/cpuinfo |grep "processor\t:"|wc -l)
 	local rc=0
-	local xargs_args=""
-	[ "$nprocs" -ge 2 ] && xargs_args="--max-procs=$nprocs"
 
 	"$PARSER" $PARSER_OPTS "$parser_cmd" -- "$profile_dir" || {
 
@@ -142,7 +140,7 @@ __parse_profiles_dir() {
 
 		# Use xargs to parallelize calls to the parser over all CPUs
 
-		/usr/libexec/xargs-findutils -n1 -d"\n" $xargs_args \
+		/bin/busybox xargs -n1 \
 			"$PARSER" $PARSER_OPTS "$parser_cmd" --
 
 		[ "$?" -ne 0 ] && {
