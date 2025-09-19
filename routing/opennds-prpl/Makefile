@@ -11,7 +11,7 @@ PKG_RELEASE:=1
 PKG_VERSION:=gen_10.2.0_v0.1.1
 PKG_SOURCE:=opennds-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/opennds/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=a0f67a5f790a8af635bd1652fbc78dcf15c7604bb5798c2b10329f38ed1c8841
 PKG_BUILD_DIR:=$(BUILD_DIR)/opennds-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Rob White <rob@blue-wave.net>
