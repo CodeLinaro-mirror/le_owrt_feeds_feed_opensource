@@ -8,10 +8,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=opennds-prpl
 PKG_RELEASE:=1
 
-PKG_VERSION:=gen_10.2.0_v0.1.0
+PKG_VERSION:=gen_10.2.0_v0.1.1
 PKG_SOURCE:=opennds-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/opennds/-/archive/$(PKG_VERSION)
-PKG_HASH:=589a2a1cf5b82c4a72f1e6a0bac088c55b5aab08cfb231e40ea5d5ef220ecc83
+PKG_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/opennds-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Rob White <rob@blue-wave.net>
