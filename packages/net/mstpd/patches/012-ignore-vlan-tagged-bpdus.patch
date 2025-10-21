@@ -1,0 +1,111 @@
+diff --git a/mstp.c b/mstp.c
+index cd579fc..b91328e 100644
+--- a/mstp.c
++++ b/mstp.c
+@@ -580,6 +580,11 @@ void MSTP_IN_rx_bpdu(port_t *prt, bpdu_t *bpdu, int size)
+     int mstis_size;
+     bridge_t *br = prt->bridge;
+ 
++    LOG_PRTNAME(br, prt, "Received BPDU from port id %x with bridge id %02x:%02x:%02x:%02hhx:%02hhx:%02hhx", 
++                __be16_to_cpu(bpdu->cistPortID), bpdu->cistRRootID.s.mac_address[0], bpdu->cistRRootID.s.mac_address[1],
++		bpdu->cistRRootID.s.mac_address[2], bpdu->cistRRootID.s.mac_address[3], bpdu->cistRRootID.s.mac_address[4],
++                bpdu->cistRRootID.s.mac_address[5]);
++
+     ++(prt->num_rx_bpdu);
+ 
+     if(prt->BpduGuardPort)
+diff --git a/packet.c b/packet.c
+index c1d4ff5..feae255 100644
+--- a/packet.c
++++ b/packet.c
+@@ -111,16 +111,40 @@ void packet_send(int ifindex, const struct iovec *iov, int iov_count, int len)
+ 
+ static void packet_rcv(uint32_t events, struct epoll_event_handler *h)
+ {
+-    int cc;
+     unsigned char buf[2048];
++    struct iovec iov = { buf, sizeof(buf) };
++
++    /* space for control messages */
++    char cmsgbuf[256];
++
++    struct msghdr msg;
+     struct sockaddr_ll sl;
+-    socklen_t salen = sizeof sl;
++    memset(&msg, 0, sizeof(msg));
++    msg.msg_name = &sl;
++    msg.msg_namelen = sizeof(sl);
++    msg.msg_iov = &iov;
++    msg.msg_iovlen = 1;
++    msg.msg_control = cmsgbuf;
++    msg.msg_controllen = sizeof(cmsgbuf);
++
++    ssize_t len = recvmsg(h->fd, &msg, MSG_TRUNC);
++    if(len < 0) {
++        ERROR("recvmsg: %m");
++    }
+ 
+-    cc = recvfrom(h->fd, &buf, sizeof(buf), 0, (struct sockaddr *) &sl, &salen);
+-    if(cc <= 0)
+-    {
+-        ERROR("recvfrom failed: %m");
+-        return;
++    /* process control messages */
++    struct cmsghdr* cmsg;
++    for(cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
++        if((cmsg->cmsg_level == SOL_PACKET) && (cmsg->cmsg_type == PACKET_AUXDATA)) {
++            struct tpacket_auxdata* aux = (struct tpacket_auxdata*) CMSG_DATA(cmsg);
++            if(aux->tp_status & TP_STATUS_VLAN_VALID) {
++                uint16_t tci = aux->tp_vlan_tci;
++                uint16_t vlan_id = tci & 0x0fff;
++                LOG("VLAN seen: id=%u, skipping\n",
++                      vlan_id);
++		goto skip;
++            }
++        }
+     }
+ 
+ #ifdef PACKET_DEBUG
+@@ -129,10 +153,12 @@ static void packet_rcv(uint32_t events, struct epoll_event_handler *h)
+            sl.sll_addr[0], sl.sll_addr[1], sl.sll_addr[2],
+            sl.sll_addr[3], sl.sll_addr[4], sl.sll_addr[5]);
+ 
+-    dump_packet(buf, cc);
++    dump_packet(buf, len);
+ #endif
+ 
+-    bridge_bpdu_rcv(sl.sll_ifindex, buf, cc);
++    bridge_bpdu_rcv(sl.sll_ifindex, buf, len);
++skip:
++    return;
+ }
+ 
+ /* Berkeley Packet filter code to filter out spanning tree packets.
+@@ -163,19 +189,24 @@ int packet_sock_init(void)
+         .filter = stp_filter,
+     };
+ 
+-    s = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_802_2));
++    s = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+     if(s < 0)
+     {
+         ERROR("socket failed: %m");
+         return -1;
+     }
+ 
++    int val = 1;
++    int version = TPACKET_V2;
+     if(setsockopt(s, SOL_SOCKET, SO_ATTACH_FILTER, &prog, sizeof(prog)) < 0)
+         ERROR("setsockopt packet filter failed: %m");
++    else if(setsockopt(s, SOL_PACKET, PACKET_VERSION, &version, sizeof(version)) < 0)
++        ERROR("setsockopt packet version failed: %m");
+     else if(fcntl(s, F_SETFL, O_NONBLOCK) < 0)
+         ERROR("fcntl set nonblock failed: %m");
+-    else
+-    {
++    else if(setsockopt(s, SOL_PACKET, PACKET_AUXDATA, &val, sizeof(val)) < 0)
++        ERROR("setsockopt packet auxdata failed: %m");
++    else {
+         packet_event.fd = s;
+         packet_event.handler = packet_rcv;
+ 
