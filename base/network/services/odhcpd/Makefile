@@ -13,7 +13,7 @@ PKG_RELEASE:=1
 PKG_VERSION:=gen_d8118f6e_v0.2.7
 PKG_SOURCE:=odhcpd-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/odhcpd/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=18fd8ae849a6b34ef016ffa3356129d3474c8a98edd0c4d09fec14c5589bbcac
 PKG_BUILD_DIR:=$(BUILD_DIR)/odhcpd-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Hans Dedecker <dedeckeh@gmail.com>
