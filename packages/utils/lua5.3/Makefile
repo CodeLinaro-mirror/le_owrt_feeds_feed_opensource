@@ -87,6 +87,7 @@ define Build/Compile
 		INSTALL_ROOT=/usr \
 		CFLAGS="$(TARGET_CPPFLAGS) $(TARGET_CFLAGS)" \
 		PKG_VERSION=$(PKG_VERSION) \
+		MYLDFLAGS="$(TARGET_LDFLAGS)" \
 		linux
 	rm -rf $(PKG_INSTALL_DIR)
 	mkdir -p $(PKG_INSTALL_DIR)
