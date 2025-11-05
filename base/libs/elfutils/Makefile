@@ -88,7 +88,8 @@ TARGET_CFLAGS += \
 	-Wno-unused-result \
 	-Wno-format-nonliteral
 
-ifneq ($(CONFIG_GCC_USE_VERSION_11),y)
+GCC_MAJOR_VERSION:=$(shell $(TARGET_CC) -dumpversion | cut -d "." -f1)
+ifeq ($(shell echo $$(($(GCC_MAJOR_VERSION) > 11))),1)
 TARGET_CFLAGS += \
 	-Wno-error=use-after-free
 endif
