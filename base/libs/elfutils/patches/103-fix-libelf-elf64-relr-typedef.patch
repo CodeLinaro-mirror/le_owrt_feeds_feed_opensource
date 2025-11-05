@@ -1,0 +1,16 @@
+--- a/libelf/libelf.h	2025-02-10 16:04:14.846278465 +0100
++++ b/libelf/libelf.h	2025-02-10 17:29:59.307514338 +0100
+@@ -80,6 +80,13 @@
+  #define DT_RELRSZ      35      /* Total size of RELR relative relocations */
+  #define DT_RELR        36      /* Address of RELR relative relocations */
+  #define DT_RELRENT     37      /* Size of one RELR relative relocaction */
++
++#else
++ #ifndef Elf64_Relr
++  /* RELR relocation table entry */
++  typedef Elf32_Word     Elf32_Relr;
++  typedef Elf64_Xword    Elf64_Relr;
++ #endif 
+ #endif
+ 
+ #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3)
