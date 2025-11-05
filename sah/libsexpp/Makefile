@@ -7,7 +7,7 @@ PKG_RELEASE:=1
 PKG_SOURCE_URL:=https://github.com/rnpgp/sexpp.git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
-PKG_MIRROR_HASH:=dce9807f4ec961e555a9be469b66c78262910faa7fcf6881c235d3b6a9d0c92e
+PKG_MIRROR_HASH:=skip
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 

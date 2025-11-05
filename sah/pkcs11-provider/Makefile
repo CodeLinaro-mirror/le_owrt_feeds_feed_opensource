@@ -9,7 +9,7 @@ PKG_SOURCE_VERSION:=v1.1.0
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
-PKG_MIRROR_HASH:=87beed74f6a977cbd4cee9f28103d37febd938085cadc93a57a39fb189cb779f
+PKG_MIRROR_HASH:=skip
 PKG_SOURCE_URL:=https://github.com/latchset/pkcs11-provider.git
 
 PKG_LICENSE:=Apache_v2

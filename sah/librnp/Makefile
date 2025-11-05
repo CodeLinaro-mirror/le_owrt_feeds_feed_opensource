@@ -8,7 +8,7 @@ PKG_CPE_ID:=cpe:/a:ribose:rnp
 PKG_SOURCE_URL:=https://github.com/rnpgp/rnp.git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
-PKG_MIRROR_HASH:=f022bbcf8110d703a6cc31ffd1e1497a21a993473a4b202b523ea578a6a69d21
+PKG_MIRROR_HASH:=skip
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 
