@@ -30,7 +30,7 @@ define Package/libp11
   CATEGORY:=Libraries
   TITLE:=PKCS#11 wrapper library
   URL:=https://www.opensc-project.org/opensc/wiki/libp11
-  DEPENDS:=+libopenssl +@OPENSSL_ENGINE
+  DEPENDS:=+libopenssl
   CONFLICTS:=engine_pkcs11
 endef
 
@@ -39,8 +39,16 @@ define Package/libp11/description
   to make using PKCS#11 implementations easier.
 endef
 
-CONFIGURE_ARGS += --with-enginesdir=/usr/lib/engines
+define Package/libp11/config
+	source "$(SOURCE)/Config.in"
+endef
 
+CONFIGURE_ARGS += --with-enginesdir=/usr/lib/engines --with-modulesdir=/usr/lib/ossl-modules/ 
+ifneq ($(CONFIG_LIBP11_INSTALL_ENGINE),y)
+CONFIGURE_ARGS += --disable-engine 
+endif
+
+ifeq ($(CONFIG_LIBP11_INSTALL_ENGINE),y)
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/*.h $(1)/usr/include/
@@ -50,13 +58,42 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libp11.pc $(1)/usr/lib/pkgconfig/libp11.pc
 endef
+else
+define Build/InstallDev
+	@echo "[libp11 InstallDev] openssl engine not built"
+endef
+endif
 
-define Package/libp11/install
+ifeq ($(CONFIG_LIBP11_INSTALL_ENGINE),y)
+define Package/libp11/install-engine
 	$(INSTALL_DIR) $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libp11.so.* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/lib/engines
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/engines/*.so* $(1)/usr/lib/engines
 	$(LN) pkcs11.so $(1)/usr/lib/engines/libpkcs11.so
 endef
+else
+define Package/libp11/install-engine
+	@echo "[libp11 install-engine] openssl engine will not be installed"
+endef
+endif
+
+ifeq ($(CONFIG_LIBP11_INSTALL_PROVIDER),y)
+define Package/libp11/install-provider
+	$(INSTALL_DIR) $(1)/usr/lib/ossl-modules/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/ossl-modules/*.so* $(1)/usr/lib/ossl-modules/
+endef
+else
+define Package/libp11/install-provider
+	@echo "[libp11 install-engine] openssl provider will not be installed"
+endef
+endif
+
+define Package/libp11/install
+	$(call Package/libp11/install-engine,$(1),)
+	$(call Package/libp11/install-provider,$(1),)
+endef
+
+
 
 $(eval $(call BuildPackage,libp11))

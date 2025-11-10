@@ -1,0 +1,13 @@
+menu "configuration"
+	depends on PACKAGE_libp11
+
+	config LIBP11_INSTALL_ENGINE
+		bool "install openssl pkcs11 engine"
+		select OPENSSL_ENGINE
+		default n
+
+	config LIBP11_INSTALL_PROVIDER
+		bool "install openssl pkcs11 provider"
+		default y
+
+endmenu

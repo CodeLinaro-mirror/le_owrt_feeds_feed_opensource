@@ -1,0 +1,58 @@
+diff --git a/configure.ac b/configure.ac
+index 5a1293e..f2f0f48 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -213,4 +213,13 @@ AC_CHECK_HEADERS([ \
+ 	unistd.h locale.h getopt.h dlfcn.h utmp.h \
+ ])
++ 
++AC_ARG_ENABLE(
++	[engine],
++	[AS_HELP_STRING([--enable-engine], [enable engine (pkcs11.so) build @<:@disabled@:>@])],
++	,
++	[enable_engine="true"]
++)
++
++ AM_CONDITIONAL([LIBP11_OSSL_ENGINE], [test "$enable_engine" = "true"])
+ 
+ AC_ARG_VAR([DOXYGEN], [doxygen utility])
+@@ -329,6 +336,7 @@ Engine directory:        ${enginesexecdir}
+ Provider directory:      ${providersexecdir}
+ Default PKCS11 module:   ${pkcs11_module}
+ API doc support:         ${enable_api_doc}
++enable Engine:           ${enable_engine}
+ Static PKCS#11 engine    ${enable_static_engine}
+ 
+ Host:                    ${host}
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 19d7db3..929d4ef 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -6,12 +6,14 @@ EXTRA_DIST = Makefile.mak libp11.rc.in pkcs11.rc.in
+ 
+ noinst_HEADERS= libp11-int.h pkcs11.h p11_pthread.h util.h
+ include_HEADERS= libp11.h p11_err.h
++if LIBP11_OSSL_ENGINE
+ if ENABLE_STATIC_ENGINE
+ lib_LTLIBRARIES = libp11.la libpkcs11.la
+ else
+ lib_LTLIBRARIES = libp11.la
+ endif
+ enginesexec_LTLIBRARIES = pkcs11.la
++endif
+ pkgconfig_DATA = libp11.pc
+ 
+ if LIBP11_OSSL_PROVIDER
+diff --git a/Makefile.am b/Makefile.am
+index e1c6df9..267af27 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -23,7 +23,7 @@ dist_noinst_DATA = COPYING INSTALL.md
+ dist_doc_DATA = NEWS
+ 
+ # Prerequisites must be first on the list
+-SUBDIRS = src doc examples tests
++SUBDIRS = src
+ 
+ # Allow detection of packaged tarball
+ dist-hook:
