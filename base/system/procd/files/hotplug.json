@@ -84,5 +84,15 @@
 			[ "isdir", "/etc/hotplug.d/%SUBSYSTEM%" ],
 			[ "exec", "/sbin/hotplug-call", "%SUBSYSTEM%" ]
 		]
-	]
+	],
+	[ "case", "ACTION", {
+		"change": [
+			[ "if",
+				[ "and",
+					[ "eq", "SUBSYSTEM", "mxl_moca_ctrl" ]
+				],
+				[ "exec", "/sbin/moca_led_ctrl", "link_change", "%DEVNAME%" ]
+			]
+		]
+        } ]
 ]
