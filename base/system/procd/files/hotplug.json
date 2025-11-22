@@ -89,7 +89,8 @@
 		"change": [
 			[ "if",
 				[ "and",
-					[ "eq", "SUBSYSTEM", "mxl_moca_ctrl" ]
+					[ "eq", "SUBSYSTEM", "mxl_moca_ctrl" ],
+					[ "isfile", "/sbin/moca_led_ctrl" ]
 				],
 				[ "exec", "/sbin/moca_led_ctrl", "link_change", "%DEVNAME%" ]
 			]
