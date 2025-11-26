@@ -1,0 +1,28 @@
+diff --git a/device-common.c b/device-common.c
+index 77a9e77..b9002bc 100644
+--- a/device-common.c
++++ b/device-common.c
+@@ -176,19 +176,10 @@ int setup_iface_addrs(struct Interface *iface)
+ 		/* AdvRASrcAddress: allow operator selection of RA source address */
+ 		if (iface->AdvRASrcAddressList != NULL) {
+ 			iface->props.if_addr_rasrc = NULL;
+-			for (struct AdvRASrcAddress *current = iface->AdvRASrcAddressList; current; current = current->next) {
+-				for (int i = 0; i < iface->props.addrs_count; i++) {
+-					struct in6_addr cmp_addr = iface->props.if_addrs[i];
+-					if (0 == memcmp(&cmp_addr, &current->address, sizeof(struct in6_addr))) {
+-						addrtostr(&(cmp_addr), addr_str, sizeof(addr_str));
+-						dlog(LOG_DEBUG, 4, "AdvRASrcAddress selecting: %s", addr_str);
+-						iface->props.if_addr_rasrc = &iface->props.if_addrs[i];
+-						break;
+-					}
+-				}
+-				if (NULL != iface->props.if_addr_rasrc)
+-					break;
+-			}
++			// Use the first address from the list. ip_nonlocal_bind must be 1 if this address is not configured on iface
++			struct AdvRASrcAddress *src_addr = &iface->AdvRASrcAddressList[0];
++				if (src_addr)
++					iface->props.if_addr_rasrc = &src_addr->address;
+ 		} else {
+ 			/* AdvRASrcAddress default: Just take the first link-local */
+ 			iface->props.if_addr_rasrc = &iface->props.if_addr;
