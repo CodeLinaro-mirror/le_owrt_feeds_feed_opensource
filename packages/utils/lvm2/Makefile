@@ -102,6 +102,7 @@ CONFIGURE_ARGS += \
 	--with-default-run-dir=/var/run/lvm \
 	--with-default-locking-dir=/var/lock/lvm \
 	--disable-readline \
+	--enable-write_install \
 	--$(if $(findstring selinux,$(BUILD_VARIANT)),en,dis)able-selinux
 
 ifneq ($(shell /bin/sh -c "echo -n 'X'"),X)
