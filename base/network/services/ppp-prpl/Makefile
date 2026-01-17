@@ -62,16 +62,6 @@ $(call Build/Configure/Default,, \
 	UNAME_R="$(LINUX_VERSION)" \
 	UNAME_M="$(ARCH)" \
 )
-	mkdir -p $(PKG_BUILD_DIR)/pppd/plugins/pppoatm/linux
-	$(CP) \
-		$(LINUX_DIR)/include/linux/compiler.h \
-		$(LINUX_DIR)/include/$(LINUX_UAPI_DIR)linux/atm*.h \
-		$(PKG_BUILD_DIR)/pppd/plugins/pppoatm/linux/
-
-	# Kernel 4.14.9+ only, ignore the exit status of cp in case the file
-	# doesn't exits
-	-$(CP) $(LINUX_DIR)/include/linux/compiler_types.h \
-		$(PKG_BUILD_DIR)/pppd/plugins/pppoatm/linux/
 endef
 
 MAKE_FLAGS += COPTS="$(TARGET_CFLAGS)" \
