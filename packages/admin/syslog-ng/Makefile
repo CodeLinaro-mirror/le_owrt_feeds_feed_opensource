@@ -77,6 +77,7 @@ endef
 define Build/Configure
 	$(SED) 's,-I/usr/include,,' $(PKG_BUILD_DIR)/configure
 	$(Build/Configure/Default)
+	$(SED) 's|relink_command=".*"|relink_command=""|' $(PKG_BUILD_DIR)/libtool
 endef
 
 LOGROTATE_MAXSIZE:=$(call qstrip,$(CONFIG_SYSLOGNG_LOGROTATE_MAXSIZE))
