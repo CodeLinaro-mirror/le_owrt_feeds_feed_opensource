@@ -49,6 +49,11 @@ define Package/sudo/conffiles
 /etc/sudoers.d/
 endef
 
+define Build/Configure
+	$(Build/Configure/Default)
+	$(SED) 's|relink_command=".*"|relink_command=""|' $(PKG_BUILD_DIR)/libtool
+endef
+
 CONFIGURE_ARGS += \
 	--without-pam \
 	--disable-pam-session \
