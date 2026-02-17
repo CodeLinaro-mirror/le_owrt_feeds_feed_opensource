@@ -28,7 +28,7 @@ define Package/p11-kit
   CATEGORY:=Libraries
   TITLE:=A library that provides a way to load and enumerate PKCS11 modules.
   URL:=https://p11-glue.github.io/p11-glue/p11-kit.html
-  DEPENDS:=+libtasn1 +libpthread
+  DEPENDS:=+libpthread
 endef
 
 define Package/p11-kit/description
@@ -42,7 +42,7 @@ define Package/p11-kit-utils
   CATEGORY:=Utilities
   TITLE:=A library that provides a way to load and enumerate PKCS11 modules.
   URL:=https://p11-glue.github.io/p11-glue/p11-kit.html
-  DEPENDS:=+libtasn1 +libpthread +p11-kit
+  DEPENDS:=+libpthread +p11-kit
 endef
 
 define Package/p11-kit-utils/description
