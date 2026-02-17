@@ -1,0 +1,21 @@
+diff --git a/src/Makefile.in b/src/Makefile.in
+index f175928a..7ccfbc9c 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -1365,15 +1365,6 @@ install-am: all-am
+ 	$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+ 	ln -sf newgrp	$(DESTDIR)$(ubindir)/sg
+ 	ln -sf vipw	$(DESTDIR)$(usbindir)/vigr
+-	set -e; for i in $(suidbins); do \
+-		chmod $(suidperms) $(DESTDIR)$(bindir)/$$i; \
+-	done
+-	set -e; for i in $(suidubins); do \
+-		chmod $(suidperms) $(DESTDIR)$(ubindir)/$$i; \
+-	done
+-	set -e; for i in $(suidusbins); do \
+-		chmod $(suidperms) $(DESTDIR)$(usbindir)/$$i; \
+-	done
+ @WITH_TCB_TRUE@	set -e; for i in $(shadowsgidubins); do \
+ @WITH_TCB_TRUE@		chown root:shadow $(DESTDIR)$(ubindir)/$$i; \
+ @WITH_TCB_TRUE@		chmod $(sgidperms) $(DESTDIR)$(ubindir)/$$i; \
+
