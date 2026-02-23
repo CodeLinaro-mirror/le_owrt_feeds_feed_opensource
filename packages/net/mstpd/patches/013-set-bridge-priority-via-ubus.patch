@@ -1,0 +1,30 @@
+diff --git a/bridge_track.c b/bridge_track.c
+index a72992e..2e10af5 100644
+--- a/bridge_track.c
++++ b/bridge_track.c
+@@ -1034,6 +1034,7 @@ static int set_stp_params(const char *if_name, amxc_var_t *params)
+     CIST_BridgeConfig config = {0};
+     int br_index = if_nametoindex(if_name);
+     int rv = -1;
++    unsigned int bridge_prio = 0;
+ 
+     if(br_index == 0) 
+     {
+@@ -1057,6 +1058,17 @@ static int set_stp_params(const char *if_name, amxc_var_t *params)
+     if(rv != 0) 
+     {
+         ERROR("Error configuring STP parameters for bridge %s", if_name);
++        goto exit;
++    }
++
++    if(amxc_var_get_key(params, "BridgePriority", AMXC_VAR_FLAG_DEFAULT) != NULL)
++    {
++        bridge_prio = GET_UINT32(params, "BridgePriority");
++        rv = CTL_set_msti_bridge_config(br_index, 0, bridge_prio);
++        if (rv != 0)
++        {
++            ERROR("Error setting bridge priority to %u for bridge %s", bridge_prio, if_name);
++        }
+     }
+ 
+ exit:
