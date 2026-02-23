@@ -40,6 +40,7 @@ ifeq ($(ARCH),mips64)
   RUSTC_TARGET_ARCH:=$(REAL_GNU_TARGET_NAME)
 else
   RUSTC_TARGET_ARCH:=$(subst openwrt,unknown,$(REAL_GNU_TARGET_NAME))
+  RUSTC_TARGET_ARCH:=$(subst buildroot,unknown,$(REAL_GNU_TARGET_NAME))
 endif
 
 RUSTC_TARGET_ARCH:=$(subst muslgnueabi,musleabi,$(RUSTC_TARGET_ARCH))
