@@ -10,10 +10,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=unbound-prpl
 PKG_RELEASE:=1
 
-PKG_VERSION:=gen_1.24.1_v0.1.0
+PKG_VERSION:=gen_1.24.2_v0.1.0
 PKG_SOURCE:=unbound-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound/-/archive/$(PKG_VERSION)
-PKG_HASH:=839a7ddc089a1d92ceb63b4a765c06e7ec32acd53ebe73246473ca300bef3645
+PKG_HASH:=9379a6dedaf18c9830b97cc5a704696a618236e32503b8af4cb4be0d6b238f1c
 PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Eric Luehrsen <ericluehrsen@gmail.com>
