@@ -145,6 +145,11 @@ define Package/bind-ddns-confgen
   TITLE+= administration tools (ddns-confgen and tsig-keygen only)
 endef
 
+define Build/Configure
+	$(Build/Configure/Default)
+	$(SED) 's|relink_command=".*"|relink_command=""|' $(PKG_BUILD_DIR)/libtool
+endef
+
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed \
 	-Wl,-rpath-link,$(PKG_BUILD_DIR)/lib/ns/.libs
 
