@@ -35,6 +35,10 @@ ifeq ($(CONFIG_ODHCP6C_ENABLE_UBUS),y)
   CMAKE_OPTIONS += -DENABLE_UBUS=on
 endif
 
+ifeq ($(CONFIG_ODHCP6C_DISABLE_RAISE_PHYSICAL_DOWN),y)
+  CMAKE_OPTIONS += -DDISABLE_RAISE_PHYSICAL_DOWN=on
+endif
+
 define Package/odhcp6c
   SECTION:=net
   CATEGORY:=Network
@@ -50,6 +54,10 @@ define Package/odhcp6c/config
   config ODHCP6C_ENABLE_UBUS
     bool "Build with ubus support"
     depends on PACKAGE_odhcp6c
+  config ODHCP6C_DISABLE_RAISE_PHYSICAL_DOWN
+    bool "When enabled, odhcp6c will not raise physical link-down notifications/events."
+    depends on PACKAGE_odhcp6c
+    default n
 endef
 
 define Package/odhcp6c/conffiles
