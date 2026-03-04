@@ -10,10 +10,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=dnsmasq-prpl
 PKG_RELEASE:=1
 
-PKG_VERSION:=gen_2.90_v0.2.12
+PKG_VERSION:=gen_2.90_v0.2.13
 PKG_SOURCE:=dnsmasq-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/dnsmasq/-/archive/$(PKG_VERSION)
-PKG_HASH:=3deaad2b4efcdb7221e87fc1ee4b93e3555b29188910c9e7c5250079a996e094
+PKG_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/dnsmasq-$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-2.0
