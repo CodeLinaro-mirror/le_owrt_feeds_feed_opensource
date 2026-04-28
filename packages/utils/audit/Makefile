@@ -127,6 +127,9 @@ define Package/audit-utils/install
 	$(CP) \
 		$(PKG_INSTALL_DIR)/usr/sbin/{augenrules,audispd,audisp-remote,auditctl,autrace,aureport,ausearch} \
 		$(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/etc/audisp/plugins.d
+	$(CP) $(PKG_INSTALL_DIR)/etc/audisp/audispd.conf $(1)/etc/audisp/
+	$(CP) $(PKG_INSTALL_DIR)/etc/audisp/plugins.d/* $(1)/etc/audisp/plugins.d/
 endef
 
 define Package/audit/install

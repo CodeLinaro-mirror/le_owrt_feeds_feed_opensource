@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: prplOS buildsystem <noreply@prplos>
+Date: Mon, 28 Apr 2026 00:00:00 +0000
+Subject: [PATCH] audisp: fix NULL plugin_dir segfault when config file is missing
+
+When /etc/audisp/audispd.conf does not exist, load_config() returns 0
+early without calling sanity_check(). sanity_check() is the only code
+path that initialises plugin_dir to its default value
+("/etc/audisp/plugins.d/"). As a result plugin_dir remains NULL and the
+subsequent opendir(daemon_config.plugin_dir) call in load_plugin_conf()
+triggers a SIGSEGV (si_code=SEGV_MAPERR, si_addr=NULL).
+
+Fix by calling sanity_check() in the ENOENT branch instead of returning
+0 directly, so that plugin_dir (and any other defaulted fields) are
+always initialised regardless of whether the configuration file exists.
+
+Signed-off-by: prplOS buildsystem <noreply@prplos>
+---
+ audisp/audispd-config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/audisp/audispd-config.c
++++ b/audisp/audispd-config.c
+@@ -141,7 +141,7 @@ int load_config(daemon_conf_t *config, c
+ 		}
+ 		audit_msg(LOG_WARNING,
+ 			"Config file %s doesn't exist, skipping", file);
+-		return 0;
++		return sanity_check(config, file);
+ 	}
+ 	fd = rc;
+
